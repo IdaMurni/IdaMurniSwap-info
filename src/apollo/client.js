@@ -21,7 +21,7 @@ export const clients = {
   // }),
   [SupportedNetwork.MATIC]: new ApolloClient({
     link: new HttpLink({
-      uri: "https://api.studio.thegraph.com/query/6940/exchangeida/v0.0.5" // <--- working example here!!
+      uri: "https://api.studio.thegraph.com/query/6940/exchangeida/v0.0.8" // <--- working example here!!
     }),
     cache: new InMemoryCache(),
     shouldBatch: true,

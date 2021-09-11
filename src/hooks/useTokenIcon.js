@@ -18,7 +18,6 @@ async function getTokenLogo(network, address) {
     //   tokenListURL = "https://tokens.coingecko.com/uniswap/all.json"; // coingecko list used for mainnet
     // }
     if (
-      network === SupportedNetwork.XDAI ||
       network === SupportedNetwork.MATIC
     ) {
       tokenListURL ="https://info.idamurni.de/default.tokenlist.json"; // honeyswap list used for xdai and polygon

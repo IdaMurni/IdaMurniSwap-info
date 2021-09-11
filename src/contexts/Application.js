@@ -207,8 +207,7 @@ export function useLatestBlocks() {
     async function fetch() {
       let subgraphName;
       if (selectedNetwork === "xDAI") subgraphName = "1hive/honeyswap-xdai";
-      else subgraphName = "exchangeida/v0.0.5"//"1hive/honeyswap-polygon";
-      console.log('subgraph >>>', subgraphName)
+      else subgraphName = "6940/exchangeida/v0.0.5"; //"1hive/honeyswap-polygon";
       healthClient
         .query({
           query: SUBGRAPH_HEALTH,

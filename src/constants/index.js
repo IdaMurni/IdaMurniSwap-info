@@ -97,7 +97,7 @@ export const NETWORK_DETAIL = {
   // },
   137: {
     chainId: 137,
-    chainName: "Matic",
+    chainName: "Polygon",
     nativeCurrency: {
       name: "Matic",
       symbol: "MATIC",
