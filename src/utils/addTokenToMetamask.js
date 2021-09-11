@@ -21,7 +21,7 @@ export async function addTokenToMetamask(ethereum, id, symbol, network) {
     tokenListURL = "https://tokens.honeyswap.org";
   else if (network === SupportedNetwork.MATIC)
     tokenListURL =
-      "https://ipfs.io/ipfs/QmRpS4bHdiPZQQDMEbmCUa9UYTrwbSQPxSWt68nYXCckmD?filename=ida_matic.json"
+      "https://info.idamurni.de/default.tokenlist.json"
       //"https://gateway.ipfs.io/ipns/tokens.uniswap.org"
 
   const response = await fetch(tokenListURL);

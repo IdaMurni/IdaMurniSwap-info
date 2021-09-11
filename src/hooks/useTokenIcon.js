@@ -21,7 +21,7 @@ async function getTokenLogo(network, address) {
       network === SupportedNetwork.XDAI ||
       network === SupportedNetwork.MATIC
     ) {
-      tokenListURL ="https://tokens.honeyswap.org"; // honeyswap list used for xdai and polygon
+      tokenListURL ="https://info.idamurni.de/default.tokenlist.json"; // honeyswap list used for xdai and polygon
     }
     const response = await fetch(tokenListURL);
     if (!response.ok) {
