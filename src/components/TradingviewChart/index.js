@@ -9,9 +9,6 @@ import { Play } from 'react-feather'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
 import { IconWrapper } from '..'
 
-import { useSelectedNetwork } from '../../contexts/Network'
-import { NETWORK_COLORS } from '../../constants'
-
 dayjs.extend(utc)
 
 export const CHART_TYPES = {
@@ -38,7 +35,6 @@ const TradingViewChart = ({
 }) => {
   // reference for DOM element to create with chart
   const ref = useRef()
-  const network = useSelectedNetwork()
 
   // pointer to the chart object
   const [chartCreated, setChartCreated] = useState(false)
@@ -133,7 +129,7 @@ const TradingViewChart = ({
       var series =
         type === CHART_TYPES.BAR
           ? chart.addHistogramSeries({
-              color: NETWORK_COLORS[network].hex,
+              color: '#28ca9d',
               priceFormat: {
                 type: 'volume',
               },
@@ -141,13 +137,13 @@ const TradingViewChart = ({
                 top: 0.32,
                 bottom: 0,
               },
-              lineColor: NETWORK_COLORS[network].hex,
+              lineColor: '#28ca9d',
               lineWidth: 3,
             })
           : chart.addAreaSeries({
-              topColor: NETWORK_COLORS[network].hex,
-              bottomColor: NETWORK_COLORS[network].rgba,
-              lineColor: NETWORK_COLORS[network].hex,
+              topColor: '#28ca9d',
+              bottomColor: 'rgba(37, 59, 90, 1)',//'rgba(255, 0, 122, 0)', // 37, 59, 90, 1
+              lineColor: '#28ca9d',
               lineWidth: 3,
             })
 
@@ -164,7 +160,7 @@ const TradingViewChart = ({
 
       // format numbers
       let percentChange = baseChange?.toFixed(2)
-      let formattedPercentChange = percentChange ? (percentChange > 0 ? '+' : '') + percentChange + '%' : '0%'
+      let formattedPercentChange = (percentChange > 0 ? '+' : '') + percentChange + '%'
       let color = percentChange >= 0 ? 'green' : 'red'
 
       // get the title of the chart
@@ -231,7 +227,6 @@ const TradingViewChart = ({
     type,
     useWeekly,
     width,
-    network,
   ])
 
   // responsiveness

@@ -1,115 +1,111 @@
-import React, {
-  createContext,
-  useContext,
-  useReducer,
-  useMemo,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
-import { timeframeOptions } from "../constants";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import { healthClient } from "../apollo/client";
-import { SUBGRAPH_HEALTH } from "../apollo/queries";
-import { useSelectedNetwork } from "./Network"
+import React, { createContext, useContext, useReducer, useMemo, useCallback, useState, useEffect } from 'react'
+import { timeframeOptions, SUPPORTED_LIST_URLS__NO_ENS } from '../constants'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import getTokenList from '../utils/tokenLists'
+import { healthClient } from '../apollo/client'
+import { SUBGRAPH_HEALTH } from '../apollo/queries'
+dayjs.extend(utc)
 
-dayjs.extend(utc);
+const UPDATE = 'UPDATE'
+const UPDATE_TIMEFRAME = 'UPDATE_TIMEFRAME'
+const UPDATE_SESSION_START = 'UPDATE_SESSION_START'
+const UPDATED_SUPPORTED_TOKENS = 'UPDATED_SUPPORTED_TOKENS'
+const UPDATED_FETCHED_TOKENS = 'UPDATED_FETCHED_TOKENS'
+const UPDATE_LATEST_BLOCK = 'UPDATE_LATEST_BLOCK'
+const UPDATE_HEAD_BLOCK = 'UPDATE_HEAD_BLOCK'
 
-const RESET = "RESET";
-const UPDATE = "UPDATE";
-const UPDATE_TIMEFRAME = "UPDATE_TIMEFRAME";
-const UPDATE_SESSION_START = "UPDATE_SESSION_START";
-const UPDATED_SUPPORTED_TOKENS = "UPDATED_SUPPORTED_TOKENS";
-const UPDATE_LATEST_BLOCK = "UPDATE_LATEST_BLOCK";
-const UPDATE_HEAD_BLOCK = "UPDATE_HEAD_BLOCK";
+const SUPPORTED_TOKENS = 'SUPPORTED_TOKENS'
+const FETCHED_TOKENS = 'FETCHED_TOKENS'
+const TIME_KEY = 'TIME_KEY'
+const CURRENCY = 'CURRENCY'
+const SESSION_START = 'SESSION_START'
+const LATEST_BLOCK = 'LATEST_BLOCK'
+const HEAD_BLOCK = 'HEAD_BLOCK'
 
-const SUPPORTED_TOKENS = "SUPPORTED_TOKENS";
-const TIME_KEY = "TIME_KEY";
-const CURRENCY = "CURRENCY";
-const SESSION_START = "SESSION_START";
-const LATEST_BLOCK = "LATEST_BLOCK";
-const HEAD_BLOCK = "HEAD_BLOCK";
-
-const ApplicationContext = createContext();
+const ApplicationContext = createContext()
 
 function useApplicationContext() {
-  return useContext(ApplicationContext);
+  return useContext(ApplicationContext)
 }
-
-const INITIAL_STATE = {
-  CURRENCY: "USD",
-  TIME_KEY: timeframeOptions.ALL_TIME,
-};
 
 function reducer(state, { type, payload }) {
   switch (type) {
     case UPDATE: {
-      const { currency } = payload;
+      const { currency } = payload
       return {
         ...state,
         [CURRENCY]: currency,
-      };
+      }
     }
     case UPDATE_TIMEFRAME: {
-      const { newTimeFrame } = payload;
+      const { newTimeFrame } = payload
       return {
         ...state,
         [TIME_KEY]: newTimeFrame,
-      };
+      }
     }
     case UPDATE_SESSION_START: {
-      const { timestamp } = payload;
+      const { timestamp } = payload
       return {
         ...state,
         [SESSION_START]: timestamp,
-      };
+      }
     }
 
     case UPDATE_LATEST_BLOCK: {
-      const { block } = payload;
+      const { block } = payload
       return {
         ...state,
         [LATEST_BLOCK]: block,
-      };
+      }
     }
 
     case UPDATE_HEAD_BLOCK: {
-      const { block } = payload;
+      const { block } = payload
       return {
         ...state,
         [HEAD_BLOCK]: block,
-      };
+      }
     }
 
     case UPDATED_SUPPORTED_TOKENS: {
-      const { supportedTokens } = payload;
+      const { supportedTokens } = payload
       return {
         ...state,
         [SUPPORTED_TOKENS]: supportedTokens,
-      };
+      }
     }
 
-    case RESET: {
-      return INITIAL_STATE;
+    case UPDATED_FETCHED_TOKENS: {
+      const { allFetchedTokens } = payload
+      return {
+        ...state,
+        [FETCHED_TOKENS]: allFetchedTokens,
+      }
     }
 
     default: {
-      throw Error(`Unexpected action type in DataContext reducer: '${type}'.`);
+      throw Error(`Unexpected action type in DataContext reducer: '${type}'.`)
     }
   }
 }
 
+const INITIAL_STATE = {
+  CURRENCY: 'USD',
+  TIME_KEY: timeframeOptions.ALL_TIME,
+}
+
 export default function Provider({ children }) {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const update = useCallback((currency) => {
     dispatch({
       type: UPDATE,
       payload: {
         currency,
       },
-    });
-  }, []);
+    })
+  }, [])
 
   // global time window for charts - see timeframe options in constants
   const updateTimeframe = useCallback((newTimeFrame) => {
@@ -118,8 +114,8 @@ export default function Provider({ children }) {
       payload: {
         newTimeFrame,
       },
-    });
-  }, []);
+    })
+  }, [])
 
   // used for refresh button
   const updateSessionStart = useCallback((timestamp) => {
@@ -128,8 +124,8 @@ export default function Provider({ children }) {
       payload: {
         timestamp,
       },
-    });
-  }, []);
+    })
+  }, [])
 
   const updateSupportedTokens = useCallback((supportedTokens) => {
     dispatch({
@@ -137,8 +133,17 @@ export default function Provider({ children }) {
       payload: {
         supportedTokens,
       },
-    });
-  }, []);
+    })
+  }, [])
+
+  const updateAllFetchedTokens = useCallback((allFetchedTokens) => {
+    dispatch({
+      type: UPDATED_FETCHED_TOKENS,
+      payload: {
+        allFetchedTokens,
+      },
+    })
+  }, [])
 
   const updateLatestBlock = useCallback((block) => {
     dispatch({
@@ -146,8 +151,8 @@ export default function Provider({ children }) {
       payload: {
         block,
       },
-    });
-  }, []);
+    })
+  }, [])
 
   const updateHeadBlock = useCallback((block) => {
     dispatch({
@@ -155,12 +160,8 @@ export default function Provider({ children }) {
       payload: {
         block,
       },
-    });
-  }, []);
-
-  const reset = useCallback(() => {
-    dispatch({ type: RESET });
-  }, []);
+    })
+  }, [])
 
   return (
     <ApplicationContext.Provider
@@ -172,9 +173,9 @@ export default function Provider({ children }) {
             updateSessionStart,
             updateTimeframe,
             updateSupportedTokens,
+            updateAllFetchedTokens,
             updateLatestBlock,
             updateHeadBlock,
-            reset,
           },
         ],
         [
@@ -183,73 +184,69 @@ export default function Provider({ children }) {
           updateTimeframe,
           updateSessionStart,
           updateSupportedTokens,
+          updateAllFetchedTokens,
           updateLatestBlock,
           updateHeadBlock,
-          reset,
         ]
       )}
     >
       {children}
     </ApplicationContext.Provider>
-  );
+  )
 }
 
 export function useLatestBlocks() {
-  const [
-    state,
-    { updateLatestBlock, updateHeadBlock },
-  ] = useApplicationContext();
+  const [state, { updateLatestBlock, updateHeadBlock }] = useApplicationContext()
 
-  const latestBlock = state?.[LATEST_BLOCK];
-  const headBlock = state?.[HEAD_BLOCK];
-  const selectedNetwork = useSelectedNetwork();
+  const latestBlock = state?.[LATEST_BLOCK]
+  const headBlock = state?.[HEAD_BLOCK]
+
   useEffect(() => {
     async function fetch() {
-      let subgraphName;
-      if (selectedNetwork === "xDAI") subgraphName = "1hive/honeyswap-xdai";
-      else subgraphName = "6940/exchangeida/v0.0.5"; //"1hive/honeyswap-polygon";
-      healthClient
-        .query({
+      try {
+        const res = await healthClient.query({
           query: SUBGRAPH_HEALTH,
-          variables: {
-            subgraphName,
-          },
         })
-        .then((res) => {
-          const syncedBlock =
-            res.data.indexingStatusForCurrentVersion.chains[0].latestBlock
-              .number;
-          const headBlock =
-            res.data.indexingStatusForCurrentVersion.chains[0].chainHeadBlock
-              .number;
-          if (syncedBlock && headBlock) {
-            updateLatestBlock(syncedBlock);
-            updateHeadBlock(headBlock);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+        // console.log(res)
+        const syncedBlock = res.data.indexingStatusForCurrentVersion.chains[0].latestBlock.number
+        const headBlock = res.data.indexingStatusForCurrentVersion.chains[0].chainHeadBlock.number
+        if (syncedBlock && headBlock) {
+          updateLatestBlock(syncedBlock)
+          updateHeadBlock(headBlock)
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
     if (!latestBlock) {
-      console.log('not lates block')
-      fetch();
+      fetch()
     }
-    console.log('it is lates block', fetch())
-  }, [latestBlock, updateHeadBlock, updateLatestBlock, selectedNetwork]);
+  }, [latestBlock, updateHeadBlock, updateLatestBlock])
 
-  return [latestBlock, headBlock];
+  return [latestBlock, headBlock]
+}
+
+export function useCurrentCurrency() {
+  const [state, { update }] = useApplicationContext()
+  const toggleCurrency = useCallback(() => {
+    if (state.currency === 'ETH') {
+      update('USD')
+    } else {
+      update('ETH')
+    }
+  }, [state, update])
+  return [state[CURRENCY], toggleCurrency]
 }
 
 export function useTimeframe() {
-  const [state, { updateTimeframe }] = useApplicationContext();
-  const activeTimeframe = state?.[TIME_KEY];
-  return [activeTimeframe, updateTimeframe];
+  const [state, { updateTimeframe }] = useApplicationContext()
+  const activeTimeframe = state?.[TIME_KEY]
+  return [activeTimeframe, updateTimeframe]
 }
 
 export function useStartTimestamp() {
-  const [activeWindow] = useTimeframe();
-  const [startDateTimestamp, setStartDateTimestamp] = useState();
+  const [activeWindow] = useTimeframe()
+  const [startDateTimestamp, setStartDateTimestamp] = useState()
 
   // monitor the old date fetched
   useEffect(() => {
@@ -258,47 +255,86 @@ export function useStartTimestamp() {
         .utc()
         .subtract(
           1,
-          activeWindow === timeframeOptions.week
-            ? "week"
-            : activeWindow === timeframeOptions.ALL_TIME
-            ? "year"
-            : "year"
+          activeWindow === timeframeOptions.week ? 'week' : activeWindow === timeframeOptions.ALL_TIME ? 'year' : 'year'
         )
-        .startOf("day")
-        .unix() - 1;
+        .startOf('day')
+        .unix() - 1
     // if we find a new start time less than the current startrtime - update oldest pooint to fetch
-    setStartDateTimestamp(startTime);
-  }, [activeWindow, startDateTimestamp]);
+    setStartDateTimestamp(startTime)
+  }, [activeWindow, startDateTimestamp])
 
-  return startDateTimestamp;
+  return startDateTimestamp
 }
 
 // keep track of session length for refresh ticker
 export function useSessionStart() {
-  const [state, { updateSessionStart }] = useApplicationContext();
-  const sessionStart = state?.[SESSION_START];
+  const [state, { updateSessionStart }] = useApplicationContext()
+  const sessionStart = state?.[SESSION_START]
 
   useEffect(() => {
     if (!sessionStart) {
-      updateSessionStart(Date.now());
+      updateSessionStart(Date.now())
     }
-  });
+  })
 
-  const [seconds, setSeconds] = useState(0);
+  const [seconds, setSeconds] = useState(0)
 
   useEffect(() => {
-    let interval = null;
+    let interval = null
     interval = setInterval(() => {
-      setSeconds(Date.now() - sessionStart ?? Date.now());
-    }, 1000);
+      setSeconds(Date.now() - sessionStart ?? Date.now())
+    }, 1000)
 
-    return () => clearInterval(interval);
-  }, [seconds, sessionStart]);
+    return () => clearInterval(interval)
+  }, [seconds, sessionStart])
 
-  return parseInt(seconds / 1000);
+  return parseInt(seconds / 1000)
 }
 
-export function useApplicationContextResetter() {
-  const [, { reset }] = useApplicationContext();
-  return reset;
+export function useListedTokens() {
+  const [state, { updateSupportedTokens }] = useApplicationContext()
+  const supportedTokens = state?.[SUPPORTED_TOKENS]
+
+  useEffect(() => {
+    async function fetchList() {
+      const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
+        const tokensSoFar = await fetchedTokens
+        const newTokens = await getTokenList(url) //
+        // debugger
+        return Promise.resolve([...tokensSoFar, ...newTokens.tokens])
+      }, Promise.resolve([]))
+      // debugger
+      let formatted = allFetched?.map((t) => t.address.toLowerCase())
+      updateSupportedTokens(formatted)
+    }
+    if (!supportedTokens) {
+      fetchList()
+    }
+    //debugger
+  }, [updateSupportedTokens, supportedTokens])
+  return supportedTokens
+}
+
+export function useAllTokensLogo() {
+  const [state, { updateAllFetchedTokens }] = useApplicationContext()
+  const allFetchedTokens = state?.[FETCHED_TOKENS]
+
+  useEffect(() => {
+    async function fetchList() {
+      const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
+        const tokensSoFar = await fetchedTokens
+        const newTokens = await getTokenList(url) //
+        // debugger
+        return Promise.resolve([...tokensSoFar, ...newTokens.tokens])
+      }, Promise.resolve([]))
+      // debugger
+
+      updateAllFetchedTokens(allFetched)
+    }
+    if (!allFetchedTokens) {
+      fetchList()
+    }
+    //debugger
+  }, [allFetchedTokens, updateAllFetchedTokens])
+  return allFetchedTokens ? allFetchedTokens : []
 }

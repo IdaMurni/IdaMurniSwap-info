@@ -1,19 +1,17 @@
-## IdaMurni Exchange Info
+# DFYN Analytics
 
-Transaction and liquidity pool stats for [Exchange.IdaMurni](https://exchange.idamurni.de).
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-Check it out live: [https://info.idamurni.de](https://info.idamurni.de).
+Analytics site for the [DFYN Network](https://dfyn.network).
 
-### Contributing
+### To Start Development
 
-#### Installing Dependencies
-
+###### Installing dependencies
 ```bash
 yarn
 ```
 
-#### Running Locally
-
+###### Running locally
 ```bash
 yarn start
 ```

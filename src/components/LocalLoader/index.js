@@ -1,51 +1,46 @@
 import React from 'react'
-// import { Lottie } from '@crello/react-lottie'
-import styled, { keyframes } from 'styled-components'
-import IdaMurniLogo from '../../assets/ida_murni_master.png'
+import styled, { css, keyframes } from 'styled-components'
+import { useDarkModeManager } from '../../contexts/LocalStorage'
 
 const pulse = keyframes`
-    0% {
-      transform: scale(1, 1);
-    }
-    50% {
-      transform: scale(1.5, 1.5);
-    }
-    100% {
-      transform: scale(1, 1);
-    }
-  `
-
-const Ida = styled.div`
-  margin: 24px;
-  width: 50px;
-  height: 50px;
-  animation: ${pulse} 2s ease-out infinite;
-  animation-iteration-count: infinite;
+  0% { transform: scale(1); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 `
+
 const Wrapper = styled.div`
   pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: ${(props) => (props.fill ? "100vh" : "180px")};
+  height: 100%;
   width: 100%;
+
+  ${(props) =>
+    props.fill && !props.height
+      ? css`
+          height: 100vh;
+        `
+      : css`
+          height: 180px;
+        `}
+`
+
+const AnimatedImg = styled.div`
+  animation: ${pulse} 800ms linear infinite;
+  & > * {
+    width: 72px;
+  }
 `
 
 const LocalLoader = ({ fill }) => {
+  const [darkMode] = useDarkModeManager()
+
   return (
     <Wrapper fill={fill}>
-      {/* <Lottie
-        config={{
-          animationData: beeAnimation,
-          loop: true,
-        }}
-        height={fill ? 100 : 84}
-        width={fill ? 100 : 84}
-      /> */}
-      <Ida>
-        <img src={IdaMurniLogo} alt="IdaMurni Exchange" width="50px" />
-      </Ida>
-      
+      <AnimatedImg>
+        <img src={require(darkMode ? '../../assets/ida_murni_master.png' : '../../assets/ida_murni_master.png')} alt="loading-icon" />
+      </AnimatedImg>
     </Wrapper>
   )
 }
