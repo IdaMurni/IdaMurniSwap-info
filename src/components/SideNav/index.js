@@ -165,7 +165,32 @@ function SideNav({ history }) {
           <AutoColumn gap="0.5rem" style={{ marginLeft: '.75rem', marginBottom: '4rem' }}>
             <HeaderText>
               <Link href="https://exchange.idamurni.de" target="_blank">
-                IdaMurni
+                Exchange
+              </Link>
+            </HeaderText>
+            <HeaderText>
+              <Link href="https://idamurni.gitbook.io/ida/" target="_blank">
+                About
+              </Link>
+            </HeaderText>
+            <HeaderText>
+              <Link href="https://twitter.com/idamurni_IDA" target="_blank">
+                Twitter
+              </Link>
+            </HeaderText>
+            <HeaderText>
+              <Link href="https://medium.com/@idamurni" target="_blank">
+                Medium
+              </Link>
+            </HeaderText>
+            <HeaderText>
+              <Link href="https://discord.gg/zWXRSYpN" target="_blank">
+                Discord
+              </Link>
+            </HeaderText>
+            <HeaderText>
+              <Link href="https://github.com/idamurni/" target="_blank">
+                Github
               </Link>
             </HeaderText>
             <Toggle isActive={isDark} toggle={toggleDarkMode} />
